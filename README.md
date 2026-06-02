@@ -13,7 +13,7 @@
 <p><strong>For academic research and non-commercial use only.</strong></p>
 
 <p>
-  <a href="JoyAI-Echo.pdf"><b>📄 Paper</b></a> |
+  <a href="joyai-echo tech report.pdf"><b>📄 Paper</b></a> |
   <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/"><b>🌐 Project Page</b></a> |
   <a href="#quickstart"><b>🚀 Quickstart</b></a> |
   <a href="#results"><b>📊 Results</b></a> |
