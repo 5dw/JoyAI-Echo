@@ -3,7 +3,7 @@
 #
 # Create with:
 #     conda env create -f environment.yml
-#     conda activate ltx-2
+#     conda activate echo-long
 #
 # This installs Python 3.11 plus ffmpeg from conda-forge, then pulls the
 # Python deps (torch family with CUDA 12.8) from pip via requirements.txt.

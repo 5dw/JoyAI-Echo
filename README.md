@@ -96,7 +96,6 @@ GSB user study on long- and short-video generation. The numbers denote the perce
 |   +-- src/ltx_distillation/         # DMD wrappers, AV pipelines, memory bank, utils
 |   `-- scripts/multishot_inference_dmd.py
 +-- inference.py                      # main entrypoint (load once, infer all)
-+-- scripts/merge_checkpoint.py       # dev tool: merge base + DMD into release ckpt
 +-- requirements.txt
 `-- environment.yml
 ```
