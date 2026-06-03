@@ -156,9 +156,20 @@ checkpoints/
 
 ### 4. Write a story prompt
 
-Create a JSON file under `prompts/`. 
+Create a JSON file under `prompts/`. Each file is a single object with a `prompts` list, where **every string is one complete shot**. A single string produces one shot; multiple strings produce a multi-shot story, with each new shot conditioned on the previous ones through the paired audio-video memory bank.
 
-Each string is one complete shot description. A single prompt creates a single shot. Multiple prompts create a multi-shot story conditioned through the paired audio-video memory bank.
+Inside each string, write these parts in order:
+
+| Part | What to describe |
+| --- | --- |
+| **Roles & Subjects** | Describe the appearance of all visible people, including age, build, hair, face, wardrobe, and speaking voice timbre when applicable. |
+| **Action & Dialogue** | What the subject does and speaks. |
+| **Style** | The overall visual and emotional aesthetic — e.g. realistic motorsport film language, cool daylight, restrained cinematic tension. |
+| **Camera Movement** | The shot type and framing or movement — e.g. a stable close-up on the face, or a medium shot from the waist up. |
+| **Background** | The setting and scene details behind the subject. |
+| **Sound Effects & BGM** | The sounds in the scene and the background music — e.g. room tone, wind, footsteps and fabric, with a soft low music bed under the dialogue or nobackground music |
+
+To turn a story into these shot descriptions automatically, pair an LLM with the story-writer system prompt at `prompts/story_writer_system_prompt.md`. A more convenient prompt-writing workflow will be released as a **director agent** for everyone to use.
 
 ### 5. Run inference
 
