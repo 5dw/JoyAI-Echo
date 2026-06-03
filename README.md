@@ -10,10 +10,8 @@
 
 <p>Standalone, inference-only release for <strong>minute-level multi-shot audio-video generation</strong> with a distilled DMD generator, paired cross-modal memory, and story-level consistency.</p>
 
-<p><strong>For academic research and non-commercial use only.</strong></p>
-
 <p>
-  <a href="joyai-echo tech report.pdf"><b>📄 Paper</b></a> |
+  <a href="https://www.researchgate.net/publication/405770309_JoyAI-Echo_Pushing_the_Frontier_of_Long_Audio-Visual_Generation"><b>📄 Paper</b></a> |
   <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/"><b>🌐 Project Page</b></a> |
   <a href="#quickstart"><b>🚀 Quickstart</b></a> |
   <a href="#results"><b>📊 Results</b></a> |
@@ -239,6 +237,8 @@ python inference.py --num-frames 121 --video-height 480 --video-width 832
 ## Acknowledgements
 
 We gratefully acknowledge the open-source projects this work builds upon — in particular [LTX2.3](https://huggingface.co/Lightricks/LTX-2.3) for the base video generator and [Gemma](https://huggingface.co/google/gemma-3-12b-it) for the text encoder. Thanks to the broader research community whose contributions made this release possible.
+
+**For academic research and non-commercial use only.**
 
 ## Citation
 
