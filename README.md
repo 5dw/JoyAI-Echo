@@ -14,6 +14,7 @@
   <a href="https://www.researchgate.net/publication/405770309_JoyAI-Echo_Pushing_the_Frontier_of_Long_Audio-Visual_Generation"><b>📄 Paper</b></a> |
   <a href="https://echo-team-joy-future-academy-jd.github.io/Echo-LongVideo-Page/"><b>🌐 Project Page</b></a> |
   <a href="#quickstart"><b>🚀 Quickstart</b></a> |
+  <a href="https://huggingface.co/jdopensource/JoyAI-Echo"><b>🤗 Hugging Face</b></a> |
   <a href="#results"><b>📊 Results</b></a> |
   <a href="#citation"><b>📝 Citation</b></a>
 </p>
