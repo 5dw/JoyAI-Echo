@@ -154,7 +154,11 @@ VIDEO_ONLY_EMBEDDINGS_PROCESSOR_KEY_OPS = (
 
 def create_and_populate(module: GemmaTextEncoder) -> GemmaTextEncoder:
     model = module.model
-    v_model = model.model.vision_tower.vision_model
+    # Transformers variants may expose either:
+    # 1) model.model.vision_tower.vision_model (wrapper style), or
+    # 2) model.model.vision_tower (SiglipVisionModel directly).
+    vision_tower = model.model.vision_tower
+    v_model = getattr(vision_tower, "vision_model", vision_tower)
     l_model = model.model.language_model
 
     config = model.config.text_config
