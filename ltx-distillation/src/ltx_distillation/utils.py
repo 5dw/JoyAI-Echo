@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import subprocess
+import shutil
 import tempfile
 from pathlib import Path
 from typing import Any, Optional
 
 import torch
 import torchaudio
-from torchvision.io import write_video
 from torchvision.transforms import functional as TVF
 
 from ltx_distillation.inference.memory_multishot import (
@@ -135,34 +135,92 @@ def write_benchmark_media(
 
     wrote_with_audio = False
     wrote_sidecar_wav = False
-    if audio_waveform is not None:
-        try:
-            write_video(
-                str(output_path),
-                video_uint8,
-                fps=fps,
-                audio_array=audio_waveform,
-                audio_fps=audio_sr,
-                audio_codec="aac",
-            )
-            wrote_with_audio = True
-        except Exception as exc:
-            print(f"[warn] write_video with audio failed for {output_path}: {exc}; audio_stats={stats}", flush=True)
+    with tempfile.TemporaryDirectory(prefix="echo_media_") as tmp_dir_str:
+        tmp_dir = Path(tmp_dir_str)
+        video_only_path = tmp_dir / "video_only.mp4"
 
-    if not wrote_with_audio:
-        write_video(str(output_path), video_uint8, fps=fps)
+        _write_video_only_ffmpeg(video_only_path, video_uint8, fps)
+
         if audio_waveform is not None:
+            audio_tmp_path = tmp_dir / "audio.wav"
             try:
-                torchaudio.save(str(output_path.with_suffix(".wav")), audio_waveform, audio_sr)
-                wrote_sidecar_wav = True
+                torchaudio.save(str(audio_tmp_path), audio_waveform, audio_sr)
+                _mux_audio_ffmpeg(video_only_path, audio_tmp_path, output_path)
+                wrote_with_audio = True
             except Exception as exc:
-                print(f"[warn] torchaudio.save failed for {output_path}: {exc}; audio_stats={stats}", flush=True)
+                print(f"[warn] ffmpeg mux with audio failed for {output_path}: {exc}; audio_stats={stats}", flush=True)
+
+        if not wrote_with_audio:
+            shutil.copyfile(video_only_path, output_path)
+            if audio_waveform is not None:
+                try:
+                    torchaudio.save(str(output_path.with_suffix(".wav")), audio_waveform, audio_sr)
+                    wrote_sidecar_wav = True
+                except Exception as exc:
+                    print(f"[warn] torchaudio.save failed for {output_path}: {exc}; audio_stats={stats}", flush=True)
 
     return {
         "wrote_audio_in_mp4": wrote_with_audio,
         "wrote_sidecar_wav": wrote_sidecar_wav,
         "audio_stats": stats,
     }
+
+
+def _write_video_only_ffmpeg(output_path: Path, video_uint8: torch.Tensor, fps: int) -> None:
+    if video_uint8.ndim != 4 or video_uint8.shape[-1] != 3:
+        raise ValueError(f"Expected video tensor shape [T, H, W, 3], got {tuple(video_uint8.shape)}")
+
+    num_frames, height, width, _ = video_uint8.shape
+    if num_frames <= 0:
+        raise ValueError("Video tensor has no frames to encode")
+
+    ffmpeg_cmd = [
+        "ffmpeg",
+        "-y",
+        "-f",
+        "rawvideo",
+        "-pix_fmt",
+        "rgb24",
+        "-s",
+        f"{width}x{height}",
+        "-r",
+        str(fps),
+        "-i",
+        "-",
+        "-an",
+        "-c:v",
+        "libx264",
+        "-pix_fmt",
+        "yuv420p",
+        str(output_path),
+    ]
+
+    video_bytes = video_uint8.contiguous().cpu().numpy().tobytes()
+    proc = subprocess.run(ffmpeg_cmd, input=video_bytes, capture_output=True)
+    if proc.returncode != 0:
+        stderr = proc.stderr.decode("utf-8", errors="ignore")
+        raise RuntimeError(f"ffmpeg failed to encode video-only output:\n{stderr}")
+
+
+def _mux_audio_ffmpeg(video_path: Path, audio_path: Path, output_path: Path) -> None:
+    ffmpeg_cmd = [
+        "ffmpeg",
+        "-y",
+        "-i",
+        str(video_path),
+        "-i",
+        str(audio_path),
+        "-c:v",
+        "copy",
+        "-c:a",
+        "aac",
+        "-shortest",
+        str(output_path),
+    ]
+    proc = subprocess.run(ffmpeg_cmd, capture_output=True)
+    if proc.returncode != 0:
+        stderr = proc.stderr.decode("utf-8", errors="ignore")
+        raise RuntimeError(f"ffmpeg failed to mux audio:\n{stderr}")
 
 
 def save_memory_bank_frames(memory_frames: list[Any], save_dir: Path) -> None:
