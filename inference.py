@@ -95,7 +95,7 @@ class InferenceConfig:
         self.gemma_path = str(_resolve_path(paths_cfg.get("gemma_path", "checkpoints/gemma-3-12b"), REPO_ROOT))
         self.prompts_dir = str(_resolve_path(paths_cfg.get("prompts_dir", "prompts"), REPO_ROOT))
         self.prompts_glob = paths_cfg.get("prompts_glob", "*.json")
-        self.output_root = str(_resolve_path(paths_cfg.get("output_root", "inference_result/dmd"), REPO_ROOT))
+        self.output_root = str(_resolve_path(paths_cfg.get("output_root", "inference_result/outputs"), REPO_ROOT))
 
         # Video
         self.num_frames = video_cfg.get("num_frames", 241)
@@ -653,7 +653,7 @@ def main() -> None:
     engine.load_generator()
 
     # Stage 3: run inference for each file using the pre-encoded prompts.
-    output_root = Path(cfg.output_root) / "outputs"
+    output_root = Path(cfg.output_root)
     for prompts_file in prompt_files:
         cached = cached_per_file.get(prompts_file, [])
         if not cached:
