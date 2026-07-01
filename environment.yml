@@ -15,6 +15,7 @@ dependencies:
   - python=3.11
   - pip
   - ffmpeg>=6
+  - libsndfile
   - pip:
       - --extra-index-url https://download.pytorch.org/whl/cu128
       - -r requirements.txt

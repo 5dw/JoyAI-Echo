@@ -34,3 +34,4 @@ tqdm>=4.66
 
 # --- video / audio I/O ---
 av>=14.0
+soundfile>=0.12

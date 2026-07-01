@@ -567,7 +567,14 @@ class InferenceEngine:
         combined_audio_path = None
         if combined_audio is not None:
             combined_audio_path = output_dir / "combined_shots.wav"
-            torchaudio.save(str(combined_audio_path), combined_audio, sample_rate=int(self.audio_sample_rate))
+            try:
+                torchaudio.save(str(combined_audio_path), combined_audio, sample_rate=int(self.audio_sample_rate))
+            except Exception as exc:
+                print(
+                    f"[warn] failed to save combined wav for {prompts_file.name}: {exc}; continuing without combined_shots.wav",
+                    flush=True,
+                )
+                combined_audio_path = None
 
         metadata["combined_path"] = str(combined_path)
         metadata["combined_audio_path"] = str(combined_audio_path) if combined_audio_path else None
